@@ -6,7 +6,9 @@ The application supports student record creation, listing, filtering, updating t
 
 ## 🎥 Project Demo
 
-**[▶ Watch the Student Management System Demo](./Screen%20Recording%202026-10-19%20163145.mp4)**
+Watch the Student Management System in action:
+
+[▶ Watch the Demo Video on Google Drive](https://drive.google.com/file/d/1muJiSI-pJFOKnBtZPlvBbMBO71_KvuUS/view?usp=sharing)
 
 ## ✨ Features
 
