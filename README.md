@@ -1,154 +1,200 @@
 # Student Management System
 
-A local Java full-stack mini project based on the Student Management System described in the uploaded internship report. This archive is organized for local use. **It has not been published or pushed to GitHub.**
+A web-based Student Management System built using **Java 21, Spring Boot, Spring Data JPA, MySQL, Maven, and HTML**. This project demonstrates student record management through a browser-based interface and a database-backed backend.
 
-## Project structure
+## 🎥 Project Demo
 
-```text
-student-management-system/
-├── pom.xml
-├── .env.example
-├── README.md
-├── VALIDATION_REPORT.md
-└── src/
-    ├── main/
-    │   ├── java/com/example/sms/
-    │   │   ├── StudentManagementApplication.java
-    │   │   ├── controller/StudentController.java
-    │   │   ├── entity/Student.java
-    │   │   ├── exception/
-    │   │   │   ├── DuplicateEmailException.java
-    │   │   │   ├── GlobalExceptionHandler.java
-    │   │   │   └── ResourceNotFoundException.java
-    │   │   ├── repository/StudentRepository.java
-    │   │   └── service/StudentService.java
-    │   └── resources/
-    │       ├── application.properties
-    │       └── static/index.html
-    └── test/
-        ├── java/com/example/sms/StudentManagementApplicationTests.java
-        └── resources/application-test.properties
+**[▶ Watch the Student Management System Demo](./Screen%20Recording%202026-10-19%20163145.mp4)**
+
+The demo video shows the application running locally.
+
+## 📌 Project Overview
+
+The Student Management System helps manage student records through a web interface connected to a MySQL database. The Spring Boot backend handles application requests and database operations.
+
+## ✨ Features
+
+- Add student records
+- View student records
+- Update existing student information
+- Delete student records
+- Store student information in MySQL
+- Browser-based user interface
+- Spring Boot backend with database persistence
+
+*The listed CRUD features should match the operations implemented in the current version of the application.*
+
+## 🛠️ Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Java 21 | Backend programming |
+| Spring Boot | Web application framework |
+| Spring Data JPA | Database access |
+| Hibernate | ORM and persistence |
+| MySQL 8 | Relational database |
+| Maven | Build and dependency management |
+| HTML | User interface |
+| Apache Tomcat | Embedded web server |
+
+## 📋 Prerequisites
+
+Install the following software:
+
+- JDK 21
+- MySQL Server 8.0 or compatible
+- Git
+- A web browser such as Chrome or Edge
+- Maven, or a working Maven Wrapper
+
+## 🚀 Installation and Setup
+
+### 1. Clone the repository
+
+Open PowerShell and run:
+
+```powershell
+git clone https://github.com/Coderera13/student-management-system.git
+cd student-management-system
 ```
 
-## Technology stack
+If you already have the project, open PowerShell in its existing directory instead.
 
-- Java 17 or newer
-- Spring Boot 4.1.1, Spring MVC REST, Spring Data JPA/Hibernate
-- MySQL for normal application runs
-- H2 in-memory database for automated tests
-- HTML, Bootstrap, JavaScript Fetch API
-- Maven for dependency management and build
+### 2. Create the database
 
-## Requirements
+Log in to MySQL and execute:
 
-Install a JDK (17+), Maven 3.6.3+ and MySQL Server. Spring Boot's requirements are documented in the official [system requirements](https://docs.spring.io/spring-boot/system-requirements.html).
+```sql
+CREATE DATABASE college_db;
+```
 
-## Run locally on Windows PowerShell
+If `college_db` already exists, you can continue without recreating it.
 
-1. Create the database in MySQL:
+### 3. Configure database credentials
 
-   ```sql
-   CREATE DATABASE college_db;
-   ```
+Open `src/main/resources/application.properties` and check that the datasource configuration uses your local database credentials.
 
-2. In the project root, set your local database credentials. Replace the example password with your actual MySQL password:
+The project configuration uses these settings:
 
-   ```powershell
-   $env:DB_USERNAME = "root"
-   $env:DB_PASSWORD = "your_mysql_password"
-   ```
+```properties
+server.port=8080
+spring.datasource.url=jdbc:mysql://localhost:3306/college_db
+spring.datasource.username=${DB_USERNAME:root}
+spring.datasource.password=${DB_PASSWORD}
+spring.jpa.hibernate.ddl-auto=update
+```
 
-3. Start the application:
+Set your credentials in PowerShell before starting the application:
 
-   ```powershell
-   mvn spring-boot:run
-   ```
+```powershell
+$env:DB_USERNAME = "root"
+$env:DB_PASSWORD = Read-Host "Enter your MySQL password"
+```
 
-4. Open **http://localhost:8080** in your browser.
+Enter your own MySQL password when prompted. Use your configured MySQL username if it is not `root`.
 
-## Run locally on macOS/Linux
+**Security:** Never commit your actual database password to GitHub. Keep credentials in environment variables or an appropriate secrets manager.
 
-```bash
-export DB_USERNAME=root
-export DB_PASSWORD='your_mysql_password'
+### 4. Run the application
+
+From the directory containing `pom.xml`, run:
+
+```powershell
 mvn spring-boot:run
 ```
 
-Then open **http://localhost:8080**.
+If Maven is not recognized, install/configure Maven or use the Maven executable available on your computer. The current repository does not contain `mvnw.cmd`.
 
-Do not paste actual passwords into source code or share them in screenshots. The sample `.env.example` is a template only; Spring does not automatically load it.
+Wait for a successful startup message similar to:
 
-## Run automated tests
+```text
+Tomcat started on port 8080 (http)
+Started StudentManagementApplication
+```
 
-From the project root:
+### 5. Open the application
 
-```bash
+Open your browser and visit:
+
+**http://localhost:8080**
+
+The application serves its homepage from `src/main/resources/static/index.html`.
+
+Keep the terminal running while using the application.
+
+## ⚙️ How It Works
+
+1. The user opens the application in a browser.
+2. The interface allows the user to manage student information.
+3. Spring Boot processes application requests.
+4. The persistence layer communicates with MySQL.
+5. The application returns the result to the interface.
+
+### CRUD Operations
+
+| Operation | Description |
+|---|---|
+| Create | Add a student |
+| Read | View student records |
+| Update | Edit student information |
+| Delete | Remove a student record |
+
+## 🗂️ Project Structure
+
+```text
+student-management-system/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   └── resources/
+│   │       ├── application.properties
+│   │       └── static/
+│   │           └── index.html
+│   └── test/
+├── .env.example
+├── .gitignore
+├── pom.xml
+├── README.md
+└── Screen Recording 2026-10-19 163145.mp4
+```
+
+## 🧪 Testing and Build
+
+Run tests:
+
+```powershell
 mvn test
 ```
 
-The tests use an isolated H2 in-memory database and do not require MySQL credentials. The test profile checks application-context startup, creating and reading records, duplicate-email rejection, department filtering, updating, and deleting.
+Build the project:
 
-## REST API
-
-| Method | Endpoint | Purpose | Expected success |
-|---|---|---|---|
-| GET | `/api/students` | List students | `200 OK` |
-| GET | `/api/students?department=CSE` | Filter by department | `200 OK` |
-| GET | `/api/students/{id}` | Get one student | `200 OK` |
-| POST | `/api/students` | Create a student | `201 Created` |
-| PUT | `/api/students/{id}` | Update a student | `200 OK` |
-| DELETE | `/api/students/{id}` | Delete a student | `204 No Content` |
-
-Example JSON body for POST and PUT:
-
-```json
-{
-  "name": "Divya Menon",
-  "email": "divya.menon@example.com",
-  "department": "CSE"
-}
+```powershell
+mvn clean package
 ```
 
-Validation errors return `400 Bad Request`, unknown IDs return `404 Not Found`, and duplicate email addresses return `409 Conflict`.
+Run these commands from the directory containing `pom.xml`.
 
-## Scope and limitations
+## 🔒 Security Considerations
 
-The web page supports adding, listing, filtering and deleting. The REST API also supports retrieving and updating an individual student. There is no login or authorization, so this educational project should not be exposed publicly without adding security controls.
+- Do not publish database credentials.
+- Avoid using real student information in demo recordings.
+- Use appropriate database permissions.
+- Add authentication and authorization before deploying sensitive student data.
 
-## Features
+## 🔮 Future Improvements
 
-- Create, list, filter, edit, and delete student records
-- REST API with Spring Boot and Spring Data JPA
-- MySQL persistence for local development
-- H2-backed automated tests
-- Responsive Bootstrap interface
-- Server-side validation and API error responses
+- Student search and filtering
+- Pagination and sorting
+- Input validation and error handling
+- User authentication and role-based access control
+- API documentation
+- Automated tests
+- Cloud deployment
 
-## REST endpoints
+## 👨‍💻 Author
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| GET | `/api/students` | List students; optional `?department=CSE` filter |
-| GET | `/api/students/{id}` | Get one student |
-| POST | `/api/students` | Create a student |
-| PUT | `/api/students/{id}` | Update a student |
-| DELETE | `/api/students/{id}` | Delete a student |
+**GitHub:** [Coderera13](https://github.com/Coderera13)
 
-## Before publishing to GitHub
+## 📄 License
 
-- Confirm `.env` files and real passwords are not committed.
-- Run the test suite and build: `mvn clean verify`.
-- Replace this README's title/description if you customize the project.
-- Add screenshots of the running app to a `docs/screenshots/` folder.
-- Create a new GitHub repository, then from the project root run:
-
-  ```powershell
-  git init
-  git add .
-  git commit -m "Add Student Management System"
-  git branch -M main
-  git remote add origin https://github.com/YOUR-USERNAME/student-management-system.git
-  git push -u origin main
-  ```
-
-Replace `YOUR-USERNAME` with your GitHub username and use the repository URL GitHub gives you. Do not publish database credentials.
+Add a license file if you intend to distribute this project under specific reuse terms.
