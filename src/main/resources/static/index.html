@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Student Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f4f7fb; }
+        .page-wrap { max-width: 1100px; }
+        .panel { border: 0; box-shadow: 0 8px 28px rgb(20 40 80 / 7%); }
+    </style>
+</head>
+<body>
+<main class="container page-wrap py-5">
+    <header class="mb-4">
+        <p class="text-primary fw-semibold mb-1">STUDENT RECORDS</p>
+        <h1 class="h2 fw-bold">Student Management System</h1>
+        <p class="text-secondary">Add, view, filter, edit and remove student records.</p>
+    </header>
+
+    <section class="card panel p-4 mb-4">
+        <h2 class="h5 mb-3">Add a student</h2>
+        <form id="studentForm" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label" for="name">Name</label>
+                <input id="name" class="form-control" maxlength="100" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" for="email">Email</label>
+                <input id="email" type="email" maxlength="120" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="department">Department</label>
+                <input id="department" class="form-control" maxlength="60" required>
+            </div>
+            <div class="col-md-2 d-grid align-self-end">
+                <button class="btn btn-primary" type="submit">Add student</button>
+            </div>
+        </form>
+        <div id="message" class="mt-3" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card panel p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <h2 class="h5 mb-0">Student list</h2>
+            <div class="d-flex flex-wrap gap-2">
+                <label class="visually-hidden" for="departmentFilter">Filter by department</label>
+                <input id="departmentFilter" class="form-control" placeholder="Department">
+                <button id="applyFilter" class="btn btn-outline-primary" type="button">Filter</button>
+                <button id="clearFilter" class="btn btn-outline-secondary" type="button">Clear</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                <tr><th>ID</th><th>Name</th><th>Email</th><th>Department</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="studentRows"></tbody>
+            </table>
+        </div>
+        <p id="emptyState" class="text-secondary d-none mb-0">No students found.</p>
+    </section>
+    <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="editStudentForm">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5" id="editStudentTitle">Edit student</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="editStudentId" type="hidden">
+                        <div class="mb-3">
+                            <label class="form-label" for="editName">Name</label>
+                            <input id="editName" class="form-control" maxlength="100" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="editEmail">Email</label>
+                            <input id="editEmail" type="email" class="form-control" maxlength="120" required>
+                        </div>
+                        <div>
+                            <label class="form-label" for="editDepartment">Department</label>
+                            <input id="editDepartment" class="form-control" maxlength="60" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+'use strict';
+
+const API = '/api/students';
+const form = document.getElementById('studentForm');
+const messageBox = document.getElementById('message');
+const rows = document.getElementById('studentRows');
+const filterInput = document.getElementById('departmentFilter');
+const emptyState = document.getElementById('emptyState');
+const editForm = document.getElementById('editStudentForm');
+const editModal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+
+function showMessage(message, isError = false) {
+    messageBox.className = `mt-3 ${isError ? 'text-danger' : 'text-success'}`;
+    messageBox.textContent = message;
+}
+
+async function responseError(response, fallback) {
+    const body = await response.json().catch(() => ({}));
+    return Object.values(body).join(', ') || fallback;
+}
+
+async function loadStudents(department = '') {
+    try {
+        const query = department ? `?department=${encodeURIComponent(department)}` : '';
+        const response = await fetch(`${API}${query}`);
+        if (!response.ok) throw new Error(await responseError(response, 'Could not load students.'));
+        const students = await response.json();
+        rows.replaceChildren();
+
+        for (const student of students) {
+            const row = document.createElement('tr');
+            for (const value of [student.id, student.name, student.email, student.department]) {
+                const cell = document.createElement('td');
+                // Use textContent rather than injecting user input as HTML.
+                cell.textContent = value ?? '';
+                row.appendChild(cell);
+            }
+
+            const actionCell = document.createElement('td');
+            actionCell.className = 'd-flex gap-2';
+
+            const editButton = document.createElement('button');
+            editButton.className = 'btn btn-sm btn-outline-primary';
+            editButton.type = 'button';
+            editButton.textContent = 'Edit';
+            editButton.addEventListener('click', () => openEditStudent(student));
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btn btn-sm btn-outline-danger';
+            deleteButton.type = 'button';
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', () => deleteStudent(student.id));
+
+            actionCell.append(editButton, deleteButton);
+            row.appendChild(actionCell);
+            rows.appendChild(row);
+        }
+        emptyState.classList.toggle('d-none', students.length > 0);
+    } catch (error) {
+        showMessage(error.message || 'Could not load students.', true);
+    }
+}
+
+function openEditStudent(student) {
+    document.getElementById('editStudentId').value = student.id;
+    document.getElementById('editName').value = student.name ?? '';
+    document.getElementById('editEmail').value = student.email ?? '';
+    document.getElementById('editDepartment').value = student.department ?? '';
+    editModal.show();
+}
+
+editForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const id = document.getElementById('editStudentId').value;
+    const student = {
+        name: document.getElementById('editName').value.trim(),
+        email: document.getElementById('editEmail').value.trim(),
+        department: document.getElementById('editDepartment').value.trim()
+    };
+
+    try {
+        const response = await fetch(`${API}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(student)
+        });
+        if (!response.ok) throw new Error(await responseError(response, 'Could not update student.'));
+        editModal.hide();
+        showMessage('Student updated successfully.');
+        await loadStudents(filterInput.value.trim());
+    } catch (error) {
+        showMessage(error.message || 'Could not update student.', true);
+    }
+});
+
+async function deleteStudent(id) {
+    if (!window.confirm('Delete this student record?')) return;
+    try {
+        const response = await fetch(`${API}/${id}`, { method: 'DELETE' });
+        if (!response.ok) throw new Error(await responseError(response, 'Could not delete student.'));
+        showMessage('Student deleted successfully.');
+        await loadStudents(filterInput.value.trim());
+    } catch (error) {
+        showMessage(error.message || 'Could not delete student.', true);
+    }
+}
+
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const student = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        department: document.getElementById('department').value.trim()
+    };
+
+    try {
+        const response = await fetch(API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(student)
+        });
+        if (!response.ok) throw new Error(await responseError(response, 'Could not add student.'));
+        form.reset();
+        showMessage('Student added successfully.');
+        await loadStudents(filterInput.value.trim());
+    } catch (error) {
+        showMessage(error.message || 'Could not add student.', true);
+    }
+});
+
+document.getElementById('applyFilter').addEventListener('click', () => {
+    loadStudents(filterInput.value.trim());
+});
+document.getElementById('clearFilter').addEventListener('click', () => {
+    filterInput.value = '';
+    loadStudents();
+});
+filterInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        loadStudents(filterInput.value.trim());
+    }
+});
+
+loadStudents();
+</script>
+</body>
+</html>
