@@ -1,109 +1,96 @@
 # Student Management System
 
-A web-based Student Management System built using **Java 21, Spring Boot, Spring Data JPA, MySQL, Maven, and HTML**. This project demonstrates student record management through a browser-based interface and a database-backed backend.
+A Java-based web application for managing student records, built using Spring Boot, Spring Data JPA, MySQL, and a responsive Bootstrap interface.
+
+The application supports student record creation, listing, filtering, updating through the REST API, and deletion.
 
 ## 🎥 Project Demo
 
 **[▶ Watch the Student Management System Demo](./Screen%20Recording%202026-10-19%20163145.mp4)**
 
-The demo video shows the application running locally.
-
-## 📌 Project Overview
-
-The Student Management System helps manage student records through a web interface connected to a MySQL database. The Spring Boot backend handles application requests and database operations.
-
 ## ✨ Features
 
-- Add student records
-- View student records
-- Update existing student information
+- Create and manage student records
+- View and filter students by department
+- Update student information through the REST API
 - Delete student records
-- Store student information in MySQL
-- Browser-based user interface
-- Spring Boot backend with database persistence
-
-*The listed CRUD features should match the operations implemented in the current version of the application.*
+- REST API built with Spring Boot
+- MySQL persistence for local development
+- H2 in-memory database for automated tests
+- Responsive Bootstrap interface
+- Server-side validation and centralized API error handling
 
 ## 🛠️ Technology Stack
 
 | Technology | Purpose |
 |---|---|
-| Java 21 | Backend programming |
-| Spring Boot | Web application framework |
-| Spring Data JPA | Database access |
-| Hibernate | ORM and persistence |
-| MySQL 8 | Relational database |
+| Java 21 | Application development |
+| Spring Boot 4.1.1 | Backend framework |
+| Spring MVC | REST API |
+| Spring Data JPA | Data persistence |
+| Hibernate | Object-relational mapping |
+| MySQL | Application database |
+| H2 | Automated test database |
+| HTML, Bootstrap, JavaScript | Frontend |
 | Maven | Build and dependency management |
-| HTML | User interface |
-| Apache Tomcat | Embedded web server |
 
 ## 📋 Prerequisites
 
-Install the following software:
+Install the following:
 
-- JDK 21
-- MySQL Server 8.0 or compatible
+- JDK 21 or a compatible JDK supported by the project
+- MySQL Server
+- Apache Maven
 - Git
-- A web browser such as Chrome or Edge
-- Maven, or a working Maven Wrapper
+- A modern web browser
 
-## 🚀 Installation and Setup
+See the [Spring Boot System Requirements](https://docs.spring.io/spring-boot/system-requirements.html) for Java and build-tool compatibility.
+
+## 🚀 Installation and Setup — Windows
 
 ### 1. Clone the repository
 
-Open PowerShell and run:
+Open PowerShell:
 
 ```powershell
 git clone https://github.com/Coderera13/student-management-system.git
 cd student-management-system
 ```
 
-If you already have the project, open PowerShell in its existing directory instead.
-
 ### 2. Create the database
 
-Log in to MySQL and execute:
+Start MySQL and execute:
 
 ```sql
 CREATE DATABASE college_db;
 ```
 
-If `college_db` already exists, you can continue without recreating it.
+If the database already exists, you can skip this step.
 
 ### 3. Configure database credentials
 
-Open `src/main/resources/application.properties` and check that the datasource configuration uses your local database credentials.
-
-The project configuration uses these settings:
-
-```properties
-server.port=8080
-spring.datasource.url=jdbc:mysql://localhost:3306/college_db
-spring.datasource.username=${DB_USERNAME:root}
-spring.datasource.password=${DB_PASSWORD}
-spring.jpa.hibernate.ddl-auto=update
-```
-
-Set your credentials in PowerShell before starting the application:
+Set the credentials for your current PowerShell session:
 
 ```powershell
 $env:DB_USERNAME = "root"
 $env:DB_PASSWORD = Read-Host "Enter your MySQL password"
 ```
 
-Enter your own MySQL password when prompted. Use your configured MySQL username if it is not `root`.
+Use the username configured on your MySQL installation if it is not `root`.
 
-**Security:** Never commit your actual database password to GitHub. Keep credentials in environment variables or an appropriate secrets manager.
+The application reads the database configuration from `src/main/resources/application.properties`.
 
-### 4. Run the application
+**Security:** Never commit your real database password to GitHub. The `.env.example` file is a template; Spring Boot does not automatically load it as environment variables.
 
-From the directory containing `pom.xml`, run:
+### 4. Start the application
+
+Run this command from the project root, where `pom.xml` is located:
 
 ```powershell
 mvn spring-boot:run
 ```
 
-If Maven is not recognized, install/configure Maven or use the Maven executable available on your computer. The current repository does not contain `mvnw.cmd`.
+If PowerShell reports that `mvn` is not recognized, install Maven or use the Maven executable installed on your computer.
 
 Wait for a successful startup message similar to:
 
@@ -114,86 +101,141 @@ Started StudentManagementApplication
 
 ### 5. Open the application
 
-Open your browser and visit:
+Visit:
 
 **http://localhost:8080**
 
-The application serves its homepage from `src/main/resources/static/index.html`.
+Keep the PowerShell window running while using the application.
 
-Keep the terminal running while using the application.
+## 🐧 Installation and Setup — macOS/Linux
 
-## ⚙️ How It Works
+Create the MySQL database first, then configure your environment variables:
 
-1. The user opens the application in a browser.
-2. The interface allows the user to manage student information.
-3. Spring Boot processes application requests.
-4. The persistence layer communicates with MySQL.
-5. The application returns the result to the interface.
-
-### CRUD Operations
-
-| Operation | Description |
-|---|---|
-| Create | Add a student |
-| Read | View student records |
-| Update | Edit student information |
-| Delete | Remove a student record |
-
-## 🗂️ Project Structure
-
-```text
-student-management-system/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       └── static/
-│   │           └── index.html
-│   └── test/
-├── .env.example
-├── .gitignore
-├── pom.xml
-├── README.md
-└── Screen Recording 2026-10-19 163145.mp4
+```bash
+export DB_USERNAME=root
+read -s DB_PASSWORD
+export DB_PASSWORD
 ```
 
-## 🧪 Testing and Build
+Enter your MySQL password when prompted.
 
-Run tests:
+From the project root, start the application:
+
+```bash
+mvn spring-boot:run
+```
+
+Open **http://localhost:8080** in your browser.
+
+## ⚙️ How the Application Works
+
+1. The user opens the web interface in a browser.
+2. The interface sends requests to the Spring Boot backend.
+3. The backend validates requests and processes student operations.
+4. Spring Data JPA and Hibernate interact with the configured database.
+5. The application returns the result to the client.
+
+## 🔌 REST API
+
+| Method | Endpoint | Purpose | Success response |
+|---|---|---|---|
+| GET | `/api/students` | List students | `200 OK` |
+| GET | `/api/students?department=CSE` | Filter by department | `200 OK` |
+| GET | `/api/students/{id}` | Retrieve one student | `200 OK` |
+| POST | `/api/students` | Create a student | `201 Created` |
+| PUT | `/api/students/{id}` | Update a student | `200 OK` |
+| DELETE | `/api/students/{id}` | Delete a student | `204 No Content` |
+
+### Example request body
+
+Use this JSON body when creating or updating a student, assuming the endpoint uses these fields:
+
+```json
+{
+  "name": "Divya Menon",
+  "email": "divya.menon@example.com",
+  "department": "CSE"
+}
+```
+
+### Error responses
+
+The application is designed to return:
+
+- `400 Bad Request` — invalid input
+- `404 Not Found` — student record not found
+- `409 Conflict` — duplicate email address
+
+These response codes should be verified against the controller and exception-handler implementation.
+
+## 🧪 Run Automated Tests
+
+From the project root:
 
 ```powershell
 mvn test
 ```
 
-Build the project:
+To run the tests and package the application:
 
 ```powershell
-mvn clean package
+mvn clean verify
 ```
 
-Run these commands from the directory containing `pom.xml`.
+The test configuration uses an H2 in-memory database, keeping automated tests separate from the normal MySQL database.
 
-## 🔒 Security Considerations
+The documented test scenarios include application startup, student creation and retrieval, duplicate-email validation, department filtering, updating, and deletion.
 
-- Do not publish database credentials.
-- Avoid using real student information in demo recordings.
-- Use appropriate database permissions.
-- Add authentication and authorization before deploying sensitive student data.
+## 🗂️ Project Structure
+
+```text
+student-management-system/
+├── pom.xml
+├── .env.example
+├── README.md
+├── VALIDATION_REPORT.md
+└── src/
+    ├── main/
+    │   ├── java/com/example/sms/
+    │   │   ├── StudentManagementApplication.java
+    │   │   ├── controller/
+    │   │   │   └── StudentController.java
+    │   │   ├── entity/
+    │   │   │   └── Student.java
+    │   │   ├── exception/
+    │   │   ├── repository/
+    │   │   │   └── StudentRepository.java
+    │   │   └── service/
+    │   │       └── StudentService.java
+    │   └── resources/
+    │       ├── application.properties
+    │       └── static/
+    │           └── index.html
+    └── test/
+        ├── java/com/example/sms/
+        └── resources/
+            └── application-test.properties
+```
+
+## 🔒 Security and Limitations
+
+- The application is intended for educational and local development use.
+- No login or authorization is currently documented.
+- Do not expose real student information or database credentials in screenshots, videos, or public deployments.
+- Add authentication, authorization, and production database security before using the application with sensitive information.
 
 ## 🔮 Future Improvements
 
-- Student search and filtering
-- Pagination and sorting
-- Input validation and error handling
-- User authentication and role-based access control
-- API documentation
-- Automated tests
-- Cloud deployment
+- Authentication and role-based authorization
+- Student search, pagination, and sorting
+- Improved frontend editing and validation
+- API documentation with OpenAPI/Swagger
+- Expanded automated test coverage
+- Deployment to a cloud platform
 
 ## 👨‍💻 Author
 
-**GitHub:** [Coderera13](https://github.com/Coderera13)
+GitHub: [@Coderera13](https://github.com/Coderera13)
 
 ## 📄 License
 
